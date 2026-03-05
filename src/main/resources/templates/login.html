@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!-- xmlns:th abilita il supporto a Thymeleaf nell'IDE, rendendo visibili gli attributi th:* -->
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="icon" href="/favicon-v3.ico" type="image/x-icon">
+    <title>Login Anagrafica</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+        }
+
+        .box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="box">
+        <h2>🔐 Accesso</h2>
+
+        <!--
+            th:if="${param.error}" controlla se nell'URL c'è un parametro "?error".
+            Spring Security aggiunge questo parametro in automatico quando il login fallisce!
+            Se è vero, questo div diventa visibile.
+        -->
+        <div th:if="${param.error}" class="error">
+            Credenziali non valide! Riprova.
+        </div>
+
+        <!--
+            Stesso principio: Spring Security aggiunge "?logout" all'URL 
+            quando l'utente esegue con successo il logout.
+        -->
+        <div th:if="${param.logout}" style="color: green; margin-bottom: 10px;">
+            Sei uscito correttamente.
+        </div>
+
+        <!--
+            Questo form invia una POST all'indirizzo "/login".
+            Spring Security intercetta questa specifica richiesta: non abbiamo 
+            dovuto scrivere noi il @PostMapping("/login") nel Controller!
+        -->
+        <form th:action="@{/login}" method="post">
+            <div>
+                <!-- 'username' e 'password' sono i nomi esatti che Spring Security si aspetta di default -->
+                <input type="text" name="username" placeholder="Username" required autofocus />
+            </div>
+            <div>
+                <input type="password" name="password" placeholder="Password" required />
+            </div>
+            <button type="submit">Entra</button>
+        </form>
+
+        <p style="margin-top: 15px; font-size: 0.9em;">Non hai un account? <a href="/registrazione"
+                style="color: #007bff;">Registrati</a></p>
+    </div>
+
+</body>
+
+</html>

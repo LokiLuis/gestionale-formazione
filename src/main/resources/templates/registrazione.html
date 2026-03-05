@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="icon" href="/favicon-v3.ico" type="image/x-icon">
+    <title>Registrazione</title>
+    <!-- Includiamo la CDN di Bootstrap per la stilizzazione veloce -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card shadow border-0" style="width: 100%; max-width: 500px;">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Registrazione</h5>
+        </div>
+        <div class="card-body">
+
+            <!-- 
+                 Messaggio di successo (Banner verde).
+                 Esiste solo se il Controller ha aggiunto "successMessage" a RedirectAttributes.
+            -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i><span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- 
+                 Il FORM.
+                 th:action -> L'URL a cui inviare la POST
+                 th:object -> Lega l'intero form all'oggetto java "registrazioneDTO" passato dal Model.
+            -->
+            <form th:action="@{/registrazione}" th:object="${registrazioneDTO}" method="post">
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Username</label>
+                    <!-- 
+                         th:field="*{username}" fa tre cose magiche:
+                         1. Assegna l'attributo name="username"
+                         2. Assegna l'attributo id="username"
+                         3. Estrae il valore corrente: value="${registrazioneDTO.username}" (utile se il form ricarica per un errore, ma non cancella quanto digitato)
+                    -->
+                    <input type="text" class="form-control" th:field="*{username}"
+                        th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'" />
+                    <!-- 
+                         Feedback Validazione (i messaggi rossi): 
+                         Se BindingResult rileva errori su "username", mostra il messaggio configurato su @Size, @NotBlank ecc.
+                    -->
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Password</label>
+                    <!-- classappend aggiunge dinamicamente la classe 'is-invalid' di bootstrap per fare il bordo rosso -->
+                    <input type="password" class="form-control" th:field="*{password}"
+                        th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" />
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Nome</label>
+                        <input type="text" class="form-control" th:field="*{nome}"
+                            th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'" />
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Cognome</label>
+                        <input type="text" class="form-control" th:field="*{cognome}"
+                            th:classappend="${#fields.hasErrors('cognome')} ? 'is-invalid'" />
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('cognome')}" th:errors="*{cognome}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Codice Fiscale</label>
+                    <input type="text" class="form-control" th:field="*{codiceFiscale}"
+                        th:classappend="${#fields.hasErrors('codiceFiscale')} ? 'is-invalid'" />
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('codiceFiscale')}"
+                        th:errors="*{codiceFiscale}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Telefono</label>
+                    <input type="tel" class="form-control" th:field="*{telefono}"
+                        th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid'" />
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Email</label>
+                    <input type="email" class="form-control" th:field="*{email}"
+                        th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" />
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-3">
+                    <a href="/login" class="btn btn-outline-secondary">Torna al Login</a>
+                    <button type="submit" class="btn btn-primary px-4">📝 Registrati</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script per chiudere dinamicamente le alert di bootstrap (x) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

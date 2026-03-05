@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestionale Formazione - Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="icon" href="/favicon-v3.ico" type="image/x-icon">
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+
+        .hover-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .icon-box {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="bi bi-rocket-takeoff-fill me-2"></i> Gestionale Formazione
+            </a>
+            <div class="d-flex align-items-center text-white">
+                <!-- 
+                     Il tag 'th:text="${#authentication.name}"' stampa lo username 
+                     dell'utente correntemente loggato tramite l'oggetto globale #authentication di Spring Security
+                -->
+                <span class="me-3"><i class="bi bi-person-circle"></i> Ciao, <strong
+                        th:text="${#authentication.name}">User</strong></span>
+
+                <!-- 
+                     Spring Security intercetta automaticamente la rotta /logout se inviata via POST.
+                     In questo modo chiuderà la sessione e ci riporterà alla pagina di login.
+                -->
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-light">Esci</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h1 class="display-5 fw-bold text-dark">Benvenuto a Bordo!</h1>
+                <p class="lead text-muted">Pannello di controllo unificato per la gestione della formazione.</p>
+
+                <!-- 
+                     Le Security Expression: '#authorization.expression()' valuta un'espressione di Spring Security.
+                     Qui verifichiamo che l'utente loggato abbia determinati ruoli per mostrargli i rispettivi badge.
+                -->
+                <span class="badge bg-warning text-dark fs-6"
+                    th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                    <i class="bi bi-shield-lock-fill"></i> Amministratore
+                </span>
+                <span class="badge bg-info text-dark fs-6"
+                    th:if="${#authorization.expression('hasRole(''ROLE_FORMATORE'')')}">
+                    <i class="bi bi-mortarboard-fill"></i> Formatore
+                </span>
+                <span class="badge bg-secondary text-white fs-6"
+                    th:if="${#authorization.expression('hasRole(''ROLE_UTENTE'')')}">
+                    <i class="bi bi-person-badge"></i> Utente
+                </span>
+            </div>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+
+            <!-- GESTIONE ANAGRAFICHE — Nascondiamo l'intera card se l'utente NON è un ADMIN -->
+            <div class="col-md-6 col-lg-4" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                <div class="card h-100 border-0 shadow-sm hover-card text-center py-4">
+                    <div class="card-body">
+                        <div class="icon-box text-danger"><i class="bi bi-people-fill"></i></div>
+                        <h5 class="card-title fw-bold">Gestione Anagrafiche</h5>
+                        <p class="card-text text-muted small">Gestisci gli utenti e i dipendenti.</p>
+                        <!-- 'stretched-link' rende cliccabile l'intera card invece che solo il pulsante -->
+                        <a href="/utenti" class="btn btn-outline-danger stretched-link">Vai all'elenco</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Il CATALOGO CORSI è visibile a TUTTI indipendentemente dal ruolo -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm hover-card text-center py-4">
+                    <div class="card-body">
+                        <div class="icon-box text-success"><i class="bi bi-journal-bookmark-fill"></i></div>
+                        <h5 class="card-title fw-bold">Catalogo Corsi</h5>
+                        <p class="card-text text-muted small">Sfoglia i corsi disponibili.</p>
+                        <a href="/corsi" class="btn btn-outline-success stretched-link">Vedi Corsi</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- I MIEI CORSI — Visibile solo ai ruoli FORMATORE -->
+            <div class="col-md-6 col-lg-4" th:if="${#authorization.expression('hasRole(''ROLE_FORMATORE'')')}">
+                <div class="card h-100 border-0 shadow-sm hover-card text-center py-4">
+                    <div class="card-body">
+                        <div class="icon-box text-danger"><i class="bi bi-mortarboard-fill"></i></div>
+                        <h5 class="card-title fw-bold">I Miei Corsi</h5>
+                        <p class="card-text text-muted small">Gestisci i corsi che insegni e vedi gli iscritti.</p>
+                        <a href="/formatore/corsi" class="btn btn-outline-danger stretched-link">Vai ai Miei Corsi</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LA MIA AGENDA (Corsi a cui si è iscritti come studente) -> Visibile a TUTTI -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm hover-card text-center py-4">
+                    <div class="card-body">
+                        <div class="icon-box text-info"><i class="bi bi-calendar-check"></i></div>
+                        <h5 class="card-title fw-bold">Le mie Attività</h5>
+                        <p class="card-text text-muted small">Controlla i corsi a cui sei iscritto.</p>
+                        <a href="/attivita/mie" class="btn btn-outline-info stretched-link">Apri Agenda</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script JavaScript di Bootstrap necessari per alcuni menu a tendina o modali (se ci fossero) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

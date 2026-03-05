@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<!-- 
+     xmlns:sec abilita i tag estesi di Spring Security (sec:authorize).
+     Senza questo URL, i tag di sicurezza non verrebbero interpretati dall'IDE,
+     ma per sicurezza Spring Security li fa girare comunque... meglio avere l'IDE felice però!
+-->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <link rel="icon" href="/favicon-v3.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <title>Gestione Corsi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+
+    <nav class="navbar navbar-dark bg-primary mb-4 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="bi bi-arrow-left-circle me-2"></i> Torna alla Dashboard</a>
+            <span class="text-white fw-bold">Gestione Corsi</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Banner Successo -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i><span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div></div> <!-- Spacer -->
+
+            <!-- 
+                 PULSANTE SICURO. sec:authorize="hasRole('ADMIN')" fa comparire il bottone "Nuovo Corso" 
+                 esclusivamente HTML finale se l'utente loggato ha il ruolo ADMIN. 
+                 Nasconderlo col CSS non sarebbe sicuro perché hackerabile dalla console del browser.
+            -->
+            <a href="/corsi/nuovo" class="btn btn-success shadow-sm" sec:authorize="hasRole('ADMIN')"><i
+                    class="bi bi-plus-lg me-1"></i>Nuovo Corso</a>
+        </div>
+
+        <!-- ================= BARRA DI RICERCA FRONTEND/BACKEND ================= -->
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-body py-2">
+                <!-- Il form di ricerca invia una HTTP GET (a '?ricerca=testo') alla stessa pagina -->
+                <form th:action="@{/corsi}" method="get" class="row g-2 align-items-end">
+                    <div class="col">
+                        <label class="form-label small fw-bold mb-0">Cerca per nome:</label>
+                        <!-- Ripopoliamo il campo di testo col valore della 'ricerca' che il Controller ci rimanda indietro -->
+                        <input type="text" name="ricerca" class="form-control form-control-sm"
+                            placeholder="Es: Java, React, Python..." th:value="${ricerca}" />
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-sm btn-success"><i
+                                class="bi bi-search me-1"></i>Cerca</button>
+                    </div>
+                    <!-- Il pulsante Reset è semplicemente un finto link "/corsi" che scardina la query 'ricerca' dall'URL e ricarica tutto pulito -->
+                    <div class="col-auto">
+                        <a href="/corsi" class="btn btn-sm btn-outline-secondary"><i
+                                class="bi bi-x-circle me-1"></i>Reset</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ================= TABELLA CORSI ================= -->
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Corso</th>
+                            <th>Descrizione</th>
+                            <th>Date</th>
+                            <th class="text-center">Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- ITERAZIONE: Per ciclara la lista corsi (foreach element in array) -->
+                        <tr th:each="corso : ${listaCorsi}">
+                            <td>
+                                <!-- 
+                                     A differenza dei template string, th:text distrugge l'HTML finto ('Java Base') 
+                                     e lo rimpiazza al 100% con il valore Server-Side (corso.nome).
+                                -->
+                                <div class="fw-bold text-dark" th:text="${corso.nome}">Java Base</div>
+                                <!-- th:text accetta concatenazioni stringhe/variabili come il "+" del javascript -->
+                                <small class="text-muted" th:text="'ID: #' + ${corso.id}"></small>
+                            </td>
+                            <td th:text="${corso.descrizione}">Descrizione...</td>
+                            <td>
+                                <small class="d-block text-muted"><i class="bi bi-calendar-event me-1"></i> <span
+                                        th:text="${corso.dataInizio}"></span></small>
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <!-- ================== LOGICA BOTTONE ISCRIVITI / DISISCRIVITI AUTOMATICO ================== -->
+                                    <!-- Controlliamo se la lista 'corsiIscritto' che ci ha passato il Controller contiene l'ID di questo specifico ciclo. -->
+                                    <th:block th:if="${corsiIscritto != null and corsiIscritto.contains(corso.id)}">
+                                        <!-- Se SÌ, vuol dire che lo studente fa parte del corso: stampa il bottone DISISCRIVITI -->
+                                        <form th:action="@{/corsi/disiscriviti/{id}(id=${corso.id})}" method="post"
+                                            style="display:inline;">
+                                            <button type="submit" class="btn btn-sm btn-success" title="Disiscriviti">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Iscritto
+                                            </button>
+                                        </form>
+                                    </th:block>
+
+                                    <th:block th:unless="${corsiIscritto != null and corsiIscritto.contains(corso.id)}">
+                                        <!-- Se NO (th:unless = altrimenti), l'utente NON partecipa al corso. Stampa il bottone ISCRIVITI vuoto -->
+                                        <form th:action="@{/corsi/iscrivi/{id}(id=${corso.id})}" method="post"
+                                            style="display:inline;">
+                                            <button type="submit" class="btn btn-sm btn-outline-success"
+                                                title="Iscriviti">
+                                                <i class="bi bi-plus-circle me-1"></i>Iscriviti
+                                            </button>
+                                        </form>
+                                    </th:block>
+
+                                    <!-- ================== BOTTONI GESTIONALI (SOLO ADMIN) ================== -->
+
+                                    <!-- VEDI ISCRITTI — solo ADMIN (il formatore li vede dalla sua personale sezione I Miei Corsi) -->
+                                    <a th:href="@{/corsi/{id}/iscritti(id=${corso.id})}"
+                                        class="btn btn-sm btn-outline-info" title="Vedi Iscritti"
+                                        sec:authorize="hasRole('ADMIN')">
+                                        <i class="bi bi-people"></i>
+                                    </a>
+                                    <!-- MODIFICA — solo ADMIN (sotto forma di @PathVariable /corsi/modifica/5) -->
+                                    <a th:href="@{/corsi/modifica/{id}(id=${corso.id})}"
+                                        class="btn btn-sm btn-outline-primary" sec:authorize="hasRole('ADMIN')">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+
+                                    <!-- ELIMINA — solo ADMIN -->
+                                    <!-- onsubmit lancia il classico popup "Sei sicuro?" di del browser JS -->
+                                    <form th:action="@{/corsi/elimina/{id}(id=${corso.id})}" method="post"
+                                        style="display:inline;"
+                                        onsubmit="return confirm('Sei sicuro di voler eliminare questo corso?');"
+                                        sec:authorize="hasRole('ADMIN')">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- CASO SPECIALE: LISTA VUOTA -->
+                        <!-- thymeleaf ha il comodo metodo .empty per ispezionare le Length degli array Java -->
+                        <tr th:if="${listaCorsi.empty}">
+                            <td colspan="4" class="text-center py-4 text-muted">Nessun corso presente. Clicca su "Nuovo
+                                Corso".</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

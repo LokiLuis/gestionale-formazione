@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="icon" href="/favicon-v3.ico" type="image/x-icon">
+    <title>I Miei Corsi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+
+    <!-- ================= NAVBAR ================= -->
+    <nav class="navbar navbar-dark bg-primary mb-4 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="bi bi-arrow-left-circle me-2"></i>Torna alla Dashboard</a>
+            <span class="text-white fw-bold">I Miei Corsi (Formatore)</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Spaziatore -->
+        <div class="d-flex justify-content-between align-items-center mb-3"></div>
+
+        <!-- ================= BARRA RICERCA ================= -->
+        <!-- Invia GET a 'formatore/corsi' riciclando il metodo che carica questa stessa pagina -->
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-body py-2">
+                <form th:action="@{/formatore/corsi}" method="get" class="row g-2 align-items-end">
+                    <div class="col">
+                        <label class="form-label small fw-bold mb-0">Cerca nei tuoi corsi:</label>
+                        <!-- Rimette dentro la textbox 'ricerca' l'ultima query effettuata -->
+                        <input type="text" name="ricerca" class="form-control form-control-sm"
+                            placeholder="Es: Java, React..." th:value="${ricerca}" />
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-sm btn-danger text-white"><i
+                                class="bi bi-search me-1"></i>Cerca</button>
+                    </div>
+                    <div class="col-auto">
+                        <a href="/formatore/corsi" class="btn btn-sm btn-outline-secondary"><i
+                                class="bi bi-x-circle me-1"></i>Reset</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Messaggio dedicato ai poveri formatori disoccupati (nessun corso trovato) -->
+        <div th:if="${listaCorsi.empty}" class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-1"></i>Non hai ancora corsi assegnati. Contatta un amministratore.
+        </div>
+
+        <!-- ================= VISUALIZZAZIONE GRID A CARDS ================= -->
+        <!-- th:unless = se NON è vuoto... (inverso di th:if) -->
+        <div class="row g-3" th:unless="${listaCorsi.empty}">
+
+            <!-- Cicla la lista di corsi ritornate dal DB (che il Service ha già filtrato e validato per te) -->
+            <div class="col-md-6" th:each="corso : ${listaCorsi}">
+                <!-- Struttura Card di bootstrap -->
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold" th:text="${corso.nome}">Corso Java</h5>
+                        <p class="card-text text-muted small" th:text="${corso.descrizione}">Descrizione</p>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <!-- Visualizzazione comoda di Inizio e Fine -->
+                            <small class="text-muted">
+                                <i class="bi bi-calendar-event me-1"></i>
+                                <span th:text="${corso.dataInizio}">01/01</span> → <span
+                                    th:text="${corso.dataFine}">31/03</span>
+                            </small>
+                            <div>
+                                <!-- Mostra banalmente corso.getUsers().size() -> in quante righine unisce il Set -->
+                                <span class="badge bg-primary me-1"
+                                    th:text="'Iscritti: ' + ${corso.users.size()}">0</span>
+
+                                <!-- Link per ispezionare chi sono gli studenti ("Vedi Iscritti") -->
+                                <!-- Ricicliamo la visualizzazione pubblica Dettaglio-Corso che già prevede il tab -->
+                                <a th:href="@{/corsi/{id}/iscritti(id=${corso.id})}"
+                                    class="btn btn-sm btn-danger text-white">
+                                    <i class="bi bi-people-fill me-1"></i>Vedi Iscritti
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Fine Ciclo -->
+
+        </div>
+    </div>
+
+</body>
+
+</html>

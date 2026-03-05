@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="icon" href="/favicon-v3.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <!-- Unisce la stringa statica 'Errore ' col valore dinamico iniettato dal GlobalExceptionHandler -->
+    <title th:text="'Errore ' + ${codiceErrore}">Errore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            /* Mantiene la card perfettamente al centro dello schermo */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .error-card {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .error-code {
+            font-size: 5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="error-card">
+        <div class="card shadow-lg border-0 text-center">
+            <div class="card-body p-5">
+
+                <!-- 
+                     th:switch è come uno "switch" in Java.
+                     In base al "codiceErrore" passato dal backend, mostra un'icona e un colore differenti.
+                -->
+                <div th:switch="${codiceErrore}">
+                    <div th:case="'404'">
+                        <i class="bi bi-search text-warning" style="font-size: 3rem;"></i> <!-- Icona lente gialla -->
+                    </div>
+                    <div th:case="'403'">
+                        <i class="bi bi-shield-lock-fill text-danger" style="font-size: 3rem;"></i>
+                        <!-- Icona scudo rosso -->
+                    </div>
+                    <!-- th:case="*" corrisponde a "default" in Java, nel caso arrivi un codice non previsto (es. 500) -->
+                    <div th:case="*">
+                        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3rem;"></i>
+                        <!-- Icona warning rossa -->
+                    </div>
+                </div>
+
+                <!-- 
+                     L'operatore "?:" (Elvis Operator) dice: se ${codiceErrore} è null o non esiste, 
+                     allora stampa '???' al suo posto. Previene pagine rotte.
+                -->
+                <div class="error-code text-dark mt-3" th:text="${codiceErrore} ?: '???'">500</div>
+
+                <!-- Stampa Titolo (es: "Accesso Negato") e Messaggio (es: "Non hai i permessi...") passati dal Controller -->
+                <h4 class="fw-bold mt-2" th:text="${titoloErrore} ?: 'Errore'">Errore</h4>
+                <p class="text-muted" th:text="${messaggioErrore} ?: 'Si è verificato un errore.'">
+                    Messaggio di errore
+                </p>
+
+                <!-- 
+                     Dettaglio tecnico, aggiunto solo per alcune eccezioni.
+                     th:if controlla l'esistenza della variabile: se non l'abbiamo passata dal Controller,
+                     tutto questo blocco DIV NON viene nemmeno generato nell'HTML finale.
+                -->
+                <div th:if="${dettaglio}" class="alert alert-light text-start mt-3" style="font-size: 0.85rem;">
+                    <strong>Dettaglio:</strong>
+                    <span th:text="${dettaglio}">dettaglio errore</span>
+                </div>
+
+                <!-- Pulsanti per recuperare la validità della navigazione e non lasciare l'utente appeso -->
+                <div class="mt-4 d-flex justify-content-center gap-2">
+                    <a href="/" class="btn btn-primary">
+                        <i class="bi bi-house-fill me-1"></i>Torna alla Home
+                    </a>
+                    <!-- Usa una piccola fuzione JavaScript integrata nel browser (history) per tornare alla pagina precedente -->
+                    <button onclick="history.back()" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Torna Indietro
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,143 @@
+{
+    "info": {
+        "_postman_id": "c1f7b7a1-2b0a-48e0-a590-bb97a08b3a0e",
+        "name": "Gestionale Formazione (Spring Boot)",
+        "description": "Collezione per il test degli endpoint del progetto Gestionale Anagrafiche e Formazione.\nI test prevedono chiamate in GET (visualizzazione pagine) e POST (login, form).",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "0"
+    },
+    "item": [
+        {
+            "name": "1. Pubblico",
+            "item": [
+                {
+                    "name": "Home Page Pubblica (Redirect a Login se non loggati)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:8081/",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8081",
+                            "path": [
+                                ""
+                            ]
+                        },
+                        "description": "Richiede la root dell'applicazione. Se non si è autenticati, Spring Security farà un redirect 302 verso /login."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Pagina di Registrazione",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:8081/registrazione",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8081",
+                            "path": [
+                                "registrazione"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "2. Autenticazione (Admin)",
+            "item": [
+                {
+                    "name": "Login Form-based (Simulazione)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/x-www-form-urlencoded"
+                            }
+                        ],
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "username",
+                                    "value": "admin",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "admin123",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "http://localhost:8081/login",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8081",
+                            "path": [
+                                "login"
+                            ]
+                        },
+                        "description": "Esegue il login come admin. In Postman, i cookie (JSESSIONID) verranno salvati automaticamente per le richieste successive."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "3. Endpoint Protetti (Richiedono Login Admin)",
+            "item": [
+                {
+                    "name": "Lista Utenti",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:8081/utenti",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8081",
+                            "path": [
+                                "utenti"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Gestione Corsi",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:8081/corsi",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8081",
+                            "path": [
+                                "corsi"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}

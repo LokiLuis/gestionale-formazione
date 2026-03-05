@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="icon" href="/favicon-v3.ico" type="image/x-icon">
+    <title>Gestione Iscrizioni</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+
+    <!-- ================= NAVBAR ================= -->
+    <nav class="navbar navbar-dark bg-primary mb-4 shadow-sm">
+        <div class="container">
+            <!-- Pulsante logico: da qui si torna alla masterlist dell'Anagrafica intera -->
+            <a class="navbar-brand" href="/utenti"><i class="bi bi-arrow-left-circle me-2"></i>Torna agli Utenti</a>
+            <span class="text-white fw-bold">Gestione Iscrizioni</span>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- Flash message -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i><span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- ================= CARD RIASSUNTIVA UTENTE ================= -->
+        <!-- Intestazione grande che ci ricorda SU QUALE UTENTE STIAMO LAVORANDO -->
+        <div class="alert alert-info d-flex align-items-center mb-4">
+            <i class="bi bi-person-circle me-3" style="font-size: 2rem;"></i>
+            <div>
+                <!-- Prende dall'oggetto {utente} (passato dal Model) il nome e cognome -->
+                <strong th:text="${utente.nome} + ' ' + ${utente.cognome}">Nome Cognome</strong>
+                <span class="text-muted"
+                    th:text="' — ' + (${utente.role != null ? #strings.replace(utente.role.nome, 'ROLE_', '') : ''})">UTENTE</span>
+                <br />
+                <small class="text-muted" th:text="${utente.email}">email@test.it</small>
+            </div>
+        </div>
+
+        <!-- ================= GRIGLIA A DUE COLONNE (50% SINISTRA / 50% DESTRA) ================= -->
+        <div class="row">
+
+            <!-- ====== COLONNA SINISTRA: Corsi a cui è ATTUALMENTE Iscritto ====== -->
+            <div class="col-md-6">
+                <!-- Box con bordo verde per indicare positività -->
+                <div class="card shadow-sm border-success mb-3">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0"><i class="bi bi-check-circle me-1"></i>Corsi Iscritti
+                            <span class="badge bg-light text-success" th:text="${corsiIscritti.size()}">0</span>
+                        </h6>
+                    </div>
+                    <!-- Lista gruppo bootstrap, rimuove i bordi tra i vari "li" e lo appiattisce vicino alla card -->
+                    <ul class="list-group list-group-flush">
+                        <!-- Iterazione lista corsi fornita dal controller -->
+                        <li th:each="corso : ${corsiIscritti}"
+                            class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong th:text="${corso.nome}">Corso Java</strong>
+                                <br /><small class="text-muted"
+                                    th:text="${corso.dataInizio} + ' → ' + ${corso.dataFine}">date</small>
+                            </div>
+
+                            <!-- PULSANTE RIMOZIONE (Disiscrivi) -->
+                            <!-- Costruisce un url custom es: /utenti/5/corsi/rimuovi/12 -->
+                            <form th:action="@{/utenti/{uid}/corsi/rimuovi/{cid}(uid=${utente.id}, cid=${corso.id})}"
+                                method="post">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Rimuovi iscrizione"
+                                    onclick="return confirm('Rimuovere questo utente dal corso?');">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </form>
+                        </li>
+
+                        <!-- Mostrato solo se l'utente non partecipa a nulla attualmente -->
+                        <li th:if="${corsiIscritti.empty}" class="list-group-item text-center text-muted py-3">
+                            Nessuna iscrizione attiva.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ====== COLONNA DESTRA: Corsi DISPONIBILI (Tutti meno quelli a cui partecipa già) ====== -->
+            <div class="col-md-6">
+                <!-- Box blu -->
+                <div class="card shadow-sm border-primary mb-3">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0"><i class="bi bi-plus-circle me-1"></i>Corsi Disponibili
+                            <span class="badge bg-light text-primary" th:text="${corsiDisponibili.size()}">0</span>
+                        </h6>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        <li th:each="corso : ${corsiDisponibili}"
+                            class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong th:text="${corso.nome}">Corso React</strong>
+                                <br /><small class="text-muted"
+                                    th:text="${corso.dataInizio} + ' → ' + ${corso.dataFine}">date</small>
+                            </div>
+
+                            <!-- PULSANTE AGGIUNTA (Iscrivi) -->
+                            <!-- Invia una post al Controller che poi rimbalzerà dinamicamente qui. -->
+                            <form th:action="@{/utenti/{uid}/corsi/iscrivi/{cid}(uid=${utente.id}, cid=${corso.id})}"
+                                method="post">
+                                <button type="submit" class="btn btn-sm btn-outline-success"
+                                    title="Iscrivi a questo corso">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </form>
+                        </li>
+
+                        <!-- Mostrato solo se un secchione si è iscritto a OGNI CORSO DEL CATALOGO! -->
+                        <li th:if="${corsiDisponibili.empty}" class="list-group-item text-center text-muted py-3">
+                            L'utente è già iscritto a tutti i corsi.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- fine ROW -->
+        </div>
+    </div>
+
+    <!-- Script Bootstrap obbligatori per chiusura Alert dinamici -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

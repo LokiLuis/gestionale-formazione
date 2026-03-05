@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="icon" href="/favicon-v3.ico" type="image/x-icon">
+    <title>Salva Corso</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+
+    <div class="card shadow border-0" style="width: 100%; max-width: 500px;">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Dettagli Corso</h5>
+        </div>
+        <div class="card-body">
+            <!-- 
+                 Il form.
+                 L'oggetto "activity" passato dal Controller può essere sia "VUOTO" (nuovo corso) 
+                 che "PIENO" (modifica di un corso esistente).
+                 Thymeleaf compila i campi in automatico in entrambi i casi con 'th:field'.
+            -->
+            <form th:action="@{/corsi/salva}" th:object="${activity}" method="post">
+
+                <!-- 
+                     Il campo ID nascosto. FONDAMENTALE in Spring Data JPA!
+                     Se l'ID c'è, invocando save() il backend scatterà una query UPDATE.
+                     Se l'ID non c'è (nuovo form vuoto), scatterà una query INSERT.
+                -->
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nome Corso</label>
+                    <input type="text" class="form-control" th:field="*{nome}" required
+                        placeholder="Es. Java Advanced" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Descrizione</label>
+                    <textarea class="form-control" th:field="*{descrizione}" rows="3"></textarea>
+                </div>
+
+                <!--
+                     I cambi di tipo LocalDate (dataInizio, dataFine) vengono automaticamente formattati
+                     da <input type="date"> per inviare il pattern nativo internazionale yyyy-MM-dd
+                -->
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <label class="form-label">Data Inizio</label>
+                        <input type="date" class="form-control" th:field="*{dataInizio}" />
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label class="form-label">Data Fine</label>
+                        <input type="date" class="form-control" th:field="*{dataFine}" />
+                    </div>
+                </div>
+
+                <!-- 
+                     ASSEGNAZIONE DEL FORMATORE:
+                     Questo è un normale select grafico, ma dietro le quinte invia un parametro ?formatoreId=X al controller.
+                -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Formatore Assegnato</label>
+                    <select name="formatoreId" class="form-select">
+                        <!-- Opzione Null per svincolare un docente dal corso -->
+                        <option value="">-- Nessun formatore --</option>
+
+                        <!-- 
+                             th:each itera sulla ${listaFormatori} passata dal Controller.
+                             th:value invierà l'ID numerico.
+                             th:text creerà l'etichetta testuale visualizzata dall'utente (es. "Mario Rossi").
+                             th:selected seleziona magicamente il formatore già assegnato leggendolo dall'oggetto "activity".
+                        -->
+                        <option th:each="f : ${listaFormatori}" th:value="${f.id}"
+                            th:text="${f.nome} + ' ' + ${f.cognome}"
+                            th:selected="${activity.formatore != null and activity.formatore.id == f.id}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="d-flex justify-content-between mt-3">
+                    <a href="/corsi" class="btn btn-outline-secondary">Annulla</a>
+                    <button type="submit" class="btn btn-success px-4">Salva Corso</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>
