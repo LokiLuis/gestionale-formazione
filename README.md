@@ -2,6 +2,8 @@
 
 Benvenuto! Questo progetto permette di gestire anagrafiche utenti e attività formative. Segui questa guida per avviare l'applicazione in pochi minuti.
 
+[![Testo Alternativo Video](https://img.youtube.com/vi/ipWxiLdLngQ/0.jpg)](https://www.youtube.com/watch?v=ipWxiLdLngQ)
+
 ---
 
 ## 🛠️ Prerequisiti
