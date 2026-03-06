@@ -2,7 +2,7 @@
 
 Benvenuto! Questo progetto permette di gestire anagrafiche utenti e attività formative. Segui questa guida per avviare l'applicazione in pochi minuti.
 
-Cliccare sull' immagine per poter guardare il risultato del progetto su youtube.
+(Cliccare sull' immagine per poter guardare il risultato del progetto su youtube.)
 [![Testo Alternativo Video](https://img.youtube.com/vi/ipWxiLdLngQ/0.jpg)](https://www.youtube.com/watch?v=ipWxiLdLngQ)
 
 ---
