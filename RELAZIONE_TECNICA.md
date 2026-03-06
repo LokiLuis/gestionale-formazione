@@ -235,10 +235,10 @@ Di seguito la rappresentazione semplificata delle entità e delle loro relazioni
 │ id           (PK)    │◄─────┤ user_id     (FK) │      │ id          (PK)  │
 │ username     UNIQUE  │      │ activity_id (FK) ├─────►│ nome              │
 │ password             │      └──────────────────┘      │ descrizione       │
-│ nome                 │                                 │ data_inizio       │
-│ cognome              │◄────────────────────────────────│ data_fine         │
-│ email        UNIQUE  │   ManyToOne (formatore_id FK)   │ formatore_id (FK) │
-│ telefono     UNIQUE  │                                 └───────────────────┘
+│ nome                 │                                │ data_inizio       │
+│ cognome              │◄───────────────────────────────│ data_fine         │
+│ email        UNIQUE  │   ManyToOne (formatore_id FK)  │ formatore_id (FK) │
+│ telefono     UNIQUE  │                                └───────────────────┘
 │ codice_fiscale UNIQUE│
 │ posizione_lavorativa │
 │ role_id      (FK)────┼──────┐  ManyToOne (un ruolo per utente)
@@ -251,6 +251,9 @@ Di seguito la rappresentazione semplificata delle entità e delle loro relazioni
                        │ nome        │
                        └─────────────┘
 ```
+
+
+<img width="601" height="1031" alt="image" src="https://github.com/user-attachments/assets/2349d6bc-e38c-47a5-b474-89bc026d18b6" />
 
 **Relazioni principali:**
 - `User` → `Role`: **ManyToOne** — ogni utente ha esattamente un ruolo assegnato (FK `role_id` nella tabella `users`). Un ruolo può essere assegnato a più utenti.
