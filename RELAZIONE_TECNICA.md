@@ -19,7 +19,7 @@
 
 
 (Cliccare sull' immagine per poter guardare il risultato del progetto su youtube.)
-[![Testo Alternativo Video](https://img.youtube.com/vi/ipWxiLdLngQ/0.jpg)](https://www.youtube.com/watch?v=ipWxiLdLngQ)
+[![Testo Alternativo Video](https://img.youtube.com/vi/piZ5f9hNpXg/0.jpg)](https://www.youtube.com/watch?v=piZ5f9hNpXg)
 
 
 ## 1. Obiettivo del Progetto
