@@ -17,6 +17,11 @@
 
 ---
 
+
+(Cliccare sull' immagine per poter guardare il risultato del progetto su youtube.)
+[![Testo Alternativo Video](https://img.youtube.com/vi/ipWxiLdLngQ/0.jpg)](https://www.youtube.com/watch?v=ipWxiLdLngQ)
+
+
 ## 1. Obiettivo del Progetto
 
 Il presente documento descrive l'attività di sviluppo svolta dal team per la realizzazione di una **applicazione web per la gestione di anagrafiche per utenti in formazione e posizioni lavorative**.
