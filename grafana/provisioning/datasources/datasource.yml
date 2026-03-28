@@ -1,0 +1,16 @@
+# ============================================================
+# GRAFANA — Auto-provisioning del Datasource
+# ============================================================
+# Questo file dice a Grafana: "Quando parti per la prima volta,
+# collegati automaticamente a Prometheus senza configurazione manuale."
+# ============================================================
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090    # "prometheus" = nome del servizio in docker-compose
+    isDefault: true
+    editable: true

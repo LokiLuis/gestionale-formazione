@@ -1,6 +1,6 @@
 HELP.md
 target/
-!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -32,8 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
-### Mac OS ###
-.DS_Store
-
-### Environment Variables ###
+### Environment ###
 .env
+
+### Monitoring Data (volumi Docker, non servono nel repo) ###
+grafana_data/
+prometheus_data/

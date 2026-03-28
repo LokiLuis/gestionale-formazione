@@ -3,52 +3,98 @@
 # ============================================================
 # Questo file definisce TUTTI i servizi (container) che
 # compongono la nostra applicazione. Con un singolo comando
-# "docker-compose up" partono sia il Database che l'App Java.
+# "docker-compose up" partono Database, App Java, Prometheus e Grafana.
 # ============================================================
-
-version: '3.8'
 
 services:
 
   # ==================== DATABASE ====================
-  # Container PostgreSQL: crea e gestisce il database
   db:
     image: postgres:15
     container_name: postgres_formazione
     environment:
-      # Queste variabili vengono lette automaticamente dal file .env
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      # Mappa la porta 5443 del TUO PC alla porta 5432 del container
-      # Questo serve per collegarti al DB dal tuo IDE (es: DBeaver)
       - "5443:5432"
     volumes:
-      # Volume persistente: i dati del DB sopravvivono al riavvio del container
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # ==================== APPLICAZIONE SPRING BOOT ====================
-  # Container Java: compila e avvia la nostra webapp
   backend:
-    build: . # Dice a Docker: "Leggi il Dockerfile nella cartella corrente"
+    build: .
     container_name: springboot_formazione
     ports:
-      # Mappa la porta 8081 del TUO PC alla porta 8081 del container
       - "8081:8081"
     depends_on:
-      # IMPORTANTE: il backend parte SOLO DOPO che il container "db" è avviato.
-      # Attenzione: questo garantisce solo l'ordine di avvio, NON che il DB
-      # sia già pronto ad accettare connessioni (per quello servirebbe un healthcheck).
-      - db
+      db:
+        condition: service_healthy  # Aspetta che il DB sia DAVVERO pronto (non solo avviato)
     environment:
-      # Qui sovrascriviamo le proprietà di Spring Boot per la connessione al DB.
-      # NOTA FONDAMENTALE: usiamo "db" come hostname (NON "localhost"!),
-      # perché dentro Docker i container si parlano tramite il nome del servizio.
-      # La porta è 5432 (quella interna di Postgres), NON 5443 (quella mappata sul PC).
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8081/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s  # Spring Boot impiega un po' a partire
+
+  # ==================== PROMETHEUS (Raccolta metriche) ====================
+  # Prometheus raccoglie ("scrapa") le metriche dall'app ogni 15 secondi.
+  # Accedi alla UI: http://localhost:9090
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml  # Configurazione scraping
+      - prometheus_data:/prometheus                                 # Dati persistenti
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # ==================== GRAFANA (Dashboard di visualizzazione) ====================
+  # Grafana legge i dati da Prometheus e li visualizza in dashboard interattive.
+  # Accedi alla UI: http://localhost:3000 (user: admin / password: admin)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana                                          # Dati persistenti
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources  # Auto-config datasource
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards    # Auto-config dashboard
+      - ./grafana/dashboards:/var/lib/grafana/dashboards                          # File JSON dashboard
+    depends_on:
+      - prometheus
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   postgres_data:
+  prometheus_data:
+  grafana_data:

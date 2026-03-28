@@ -3,6 +3,17 @@
 
 ---
 
+| Campo            | Dettaglio                              |
+|------------------|----------------------------------------|
+| **Documento**    | Relazione Tecnica Finale               |
+| **Versione**     | 1.0                                    |
+| **Data**         | 01/03/2026                             |
+| **Redatto da**   | Team di Sviluppo                       |
+| **Destinatario** | Project Manager                        |
+| **Stato**        | Consegnato                             |
+
+---
+
 ## Indice
 
 1. [Obiettivo del Progetto](#1-obiettivo-del-progetto)
@@ -13,14 +24,7 @@
 6. [Istruzioni di Avvio (Deployment)](#6-istruzioni-di-avvio-deployment)
 7. [Note Finali e Raccomandazioni](#7-note-finali-e-raccomandazioni)
 
-
-
 ---
-
-
-(Cliccare sull' immagine per poter guardare il risultato del progetto su youtube.)
-[![Testo Alternativo Video](https://img.youtube.com/vi/piZ5f9hNpXg/0.jpg)](https://www.youtube.com/watch?v=piZ5f9hNpXg)
-
 
 ## 1. Obiettivo del Progetto
 
@@ -33,14 +37,13 @@ Il sistema consente di:
 - Gestire le iscrizioni degli utenti ai corsi tramite una relazione Molti-a-Molti.
 - Proteggere tutte le aree applicative tramite un sistema di autenticazione basato su ruoli, garantendo che ogni profilo acceda esclusivamente alle funzionalità di propria competenza.
 
-
-
+Il progetto è stato completato da un team di **3 sviluppatori** in **10 giorni lavorativi** (80 ore totali di sviluppo per sviluppatore).
 
 ---
 
 ## 2. Architettura e Tecnologie Scelte
 
-Il team ha adottato uno stack tecnologico **Java-based**, moderno e consolidato in ambito enterprise, che garantisce robustezza, manutenibilità.
+Il team ha adottato uno stack tecnologico **Java-based**, moderno e consolidato in ambito enterprise, che garantisce robustezza, manutenibilità e facilità di onboarding per futuri sviluppatori.
 
 ### 2.1 Stack Tecnologico
 
@@ -73,11 +76,6 @@ Controller  →  Service  →  Repository  →  Database
 
 L'uso di **DTO (Data Transfer Object)** separa il modello di dominio interno dall'oggetto esposto alle view, prevenendo l'esposizione accidentale di dati sensibili (es. hash della password).
 
-
-
-
----
-
 ### 2.3 Sicurezza
 
 La sicurezza è gestita interamente da **Spring Security 6** con le seguenti misure:
@@ -92,17 +90,6 @@ La sicurezza è gestita interamente da **Spring Security 6** con le seguenti mis
   - `/formatore/**` → `ROLE_ADMIN` o `ROLE_FORMATORE`
   - Qualsiasi altra rotta → utente autenticato
 
-### 2.4 Testing, Logging e Gestione Errori
-
-Il progetto adotta diverse pratiche per garantire affidabilità, stabilità e facilità di risoluzione dei problemi:
-
-- **Test Unitari (JUnit 5 & Mockito):** La logica di business principale, situata nei livelli service (`UserService`, `ActivityService`), è testata tramite JUnit. I test isolano le dipendenze esterne (come il database) sfruttando Mockito, garantendo ad esempio che regole come l'univocità delle email o l'assegnazione dei ruoli funzionino correttamente.
-- **Testing degli Endpoint (Postman):** Assieme al codice sorgente viene fornita una collection Postman (`postman_collection.json`) pronta all'uso, utile per saggiare in modo programmatico le procedure di login form-based e le risposte delle rotte protette.
-- **Gestione Errori Centralizzata (Global Exception Handling):** Le eccezioni applicative (come `404 Not Found`, tentativi di inserire dati duplicati con `DuplicateResourceException`, o accesso negato `403 Forbidden`) non generano logiche sparse. Sono invece catturate globalmente dalla classe `GlobalExceptionHandler` (annotata con `@ControllerAdvice`), che reindirizza l'utente a una vista gradevole (`error.html`) evitando l'esposizione di stack trace malevoli o interfacce di default (Whitelabel Error).
-- **Logging (SLF4J):** Spring Boot gestisce i log applicativi che sono stati configurati per aiutare a tracciare passaggi critici ed eventuali eccezioni in console, rendendo immediato il debug.
-
-
-
 ---
 
 ## 3. Moduli Sviluppati e Divisione del Lavoro
@@ -112,7 +99,7 @@ Il progetto è stato suddiviso in **3 moduli verticali** indipendenti, uno per s
 ---
 
 ### Modulo A — Security & Autenticazione
-**Sviluppatore assegnato:** Luis Dragos Istrate
+**Sviluppatore assegnato:** Sviluppatore 1
 
 Questo modulo costituisce la **fondamenta trasversale** dell'intera applicazione. Nessun altro modulo è accessibile senza che questo sia funzionante.
 
@@ -132,12 +119,10 @@ Questo modulo costituisce la **fondamenta trasversale** dell'intera applicazione
 - [x] Protezione differenziata delle rotte per ruolo
 - [x] Visualizzazione condizionale degli elementi UI in base al ruolo (`sec:authorize`)
 
-
-
 ---
 
 ### Modulo B — Anagrafica Utenti
-**Sviluppatore assegnato:** Gaetano Rocchetti
+**Sviluppatore assegnato:** Sviluppatore 2
 
 Questo modulo gestisce il ciclo di vita completo degli utenti nel sistema (operazioni CRUD), accessibile esclusivamente agli amministratori.
 
@@ -166,12 +151,10 @@ Questo modulo gestisce il ciclo di vita completo degli utenti nel sistema (opera
 - [x] Validazione dati con Bean Validation (`@NotBlank`, `@Email`)
 - [x] Gestione eccezioni centralizzata (`DuplicateResourceException` per email, telefono, codice fiscale duplicati; `ResourceNotFoundException` per risorse non trovate; `GlobalExceptionHandler` centralizzato)
 
-
-
 ---
 
 ### Modulo C — Attività Formative (Corsi)
-**Sviluppatore assegnato:** Claudio Monaco Carmelo
+**Sviluppatore assegnato:** Sviluppatore 3
 
 Questo modulo gestisce le attività formative, la loro assegnazione ai formatori e le iscrizioni degli utenti.
 
@@ -192,15 +175,13 @@ Questo modulo gestisce le attività formative, la loro assegnazione ai formatori
 - [x] Dashboard formatore: visualizzazione dei propri corsi e dei relativi iscritti
 - [x] Vista "Le mie attività" per l'utente standard
 
-
-
 ---
 
 ## 4. Modalità di Lavoro e Organizzazione del Team
 
 ### 4.1 Metodologia
 
-Il team ha adottato una metodologia di lavoro **ispirata all'Agile**, adattata al contesto di un progetto a tempistiche ristrette. L'obiettivo era massimizzare la produttività individuale riducendo al minimo le dipendenze bloccanti tra sviluppatori.
+Il team ha adottato una metodologia di lavoro **ispirata all'Agile**, adattata al contesto di un progetto a tempistiche ristrette (10 giorni lavorativi). L'obiettivo era massimizzare la produttività individuale riducendo al minimo le dipendenze bloccanti tra sviluppatori.
 
 ### 4.2 Fasi del Progetto
 
@@ -212,33 +193,33 @@ Il team ha adottato una metodologia di lavoro **ispirata all'Agile**, adattata a
 
 ### 4.3 Coordinamento
 
-- **Daily meeting**: ogni mattina, il team si allineava sullo stato di avanzamento di ciascun modulo, segnalando eventuali blocchi e coordinando le dipendenze (es. il Modulo B e C dipendono dalla struttura dell'entità `User` definita nel Modulo A).
+- **Daily Stand-up meeting**: ogni mattina, il team si allineava sullo stato di avanzamento di ciascun modulo, segnalando eventuali blocchi e coordinando le dipendenze (es. il Modulo B e C dipendono dalla struttura dell'entità `User` definita nel Modulo A).
 - **Contratto di interfaccia preliminare**: prima di procedere allo sviluppo parallelo, il team ha definito e condiviso la struttura delle entità JPA (`User`, `Role`, `Activity`) e le loro relazioni. Questo ha consentito a ciascuno sviluppatore di lavorare in isolamento senza sorprese durante l'integrazione.
 - **Gestione dei conflitti minimizzata**: la divisione verticale per modulo ha garantito che ogni sviluppatore operasse su package Java e template Thymeleaf distinti, rendendo i merge quasi privi di conflitti.
 
 ### 4.4 Strumenti di Supporto
 
+- **Controllo di versione**: Git per la gestione del codice sorgente.
 - **IDE**: IntelliJ IDEA.
-
-
+- **Comunicazione**: canale dedicato per la sincronizzazione asincrona tra i Daily.
 
 ---
 
-## 5. Schema del Database (Modello Entity-Relationship)
+## 5. Schema del Database (Modello E/R)
 
 Di seguito la rappresentazione semplificata delle entità e delle loro relazioni:
 
 ```
 ┌──────────────────────┐      ┌──────────────────┐      ┌───────────────────┐
-│        users         │      │  user_activities  │     │    activities     │
+│        users         │      │  user_activities  │      │    activities     │
 ├──────────────────────┤      │  (tabella ponte) │      ├───────────────────┤
 │ id           (PK)    │◄─────┤ user_id     (FK) │      │ id          (PK)  │
 │ username     UNIQUE  │      │ activity_id (FK) ├─────►│ nome              │
 │ password             │      └──────────────────┘      │ descrizione       │
-│ nome                 │                                │ data_inizio       │
-│ cognome              │◄───────────────────────────────│ data_fine         │
-│ email        UNIQUE  │   ManyToOne (formatore_id FK)  │ formatore_id (FK) │
-│ telefono     UNIQUE  │                                └───────────────────┘
+│ nome                 │                                 │ data_inizio       │
+│ cognome              │◄────────────────────────────────│ data_fine         │
+│ email        UNIQUE  │   ManyToOne (formatore_id FK)   │ formatore_id (FK) │
+│ telefono     UNIQUE  │                                 └───────────────────┘
 │ codice_fiscale UNIQUE│
 │ posizione_lavorativa │
 │ role_id      (FK)────┼──────┐  ManyToOne (un ruolo per utente)
@@ -252,9 +233,6 @@ Di seguito la rappresentazione semplificata delle entità e delle loro relazioni
                        └─────────────┘
 ```
 
-
-<img width="601" height="1031" alt="image" src="https://github.com/user-attachments/assets/2349d6bc-e38c-47a5-b474-89bc026d18b6" />
-
 **Relazioni principali:**
 - `User` → `Role`: **ManyToOne** — ogni utente ha esattamente un ruolo assegnato (FK `role_id` nella tabella `users`). Un ruolo può essere assegnato a più utenti.
 - `User` ↔ `Activity` (iscritti): **ManyToMany** — un utente può essere iscritto a più corsi, un corso può avere più utenti iscritti. Gestita dalla tabella ponte `user_activities`.
@@ -263,9 +241,6 @@ Di seguito la rappresentazione semplificata delle entità e delle loro relazioni
 **Legenda tecnica:**
 - **PK (Primary Key)**: Chiave Primaria. Identificativo unico e immutabile di ogni riga della tabella (es. l'ID).
 - **FK (Foreign Key)**: Chiave Esterna. Rappresenta un legame verso un'altra tabella, indicando la Chiave Primaria del record associato.
-- **
-UK (Unique Key)**: Chiave Univoca. Garantisce che tutti i valori in una determinata colonna siano univoci e non si ripetano mai (es. email o username).
-
 
 ---
 
@@ -294,27 +269,10 @@ docker-compose up --build
 
 L'applicazione sarà disponibile all'indirizzo: **http://localhost:8081**
 
-
-**Credenziali di accesso di default** (create dal `DataInitializer` al primo avvio):
-
-| Ruolo   | Username | Email                 | Password |
-|---------|----------|-----------------------|----------|
-| `ADMIN` | `admin`  | admin@gestionale.it   | admin123 |
-
-
 Per fermare i servizi:
 ```bash
 docker-compose down
 ```
-
-
-
-
-
-
-
-
-
 
 ---
 
@@ -358,9 +316,9 @@ L'applicazione sarà disponibile all'indirizzo: **http://localhost:8081**
 
 **Credenziali di accesso di default** (create dal `DataInitializer` al primo avvio):
 
-| Ruolo   | Username | Email                 | Password |
-|---------|----------|-----------------------|----------|
-| `ADMIN` | `admin`  | admin@gestionale.it   | admin123 |
+| Ruolo   | Email                 | Password |
+|---------|-----------------------|----------|
+| `ADMIN` | admin@example.com     | admin    |
 
 ---
 
@@ -370,6 +328,8 @@ Il sistema è stato completato nei tempi stabiliti e copre tutti i requisiti fun
 
 - **Variabili d'ambiente**: in un ambiente di produzione, rimuovere i valori di fallback da `application.properties` e gestire tutte le credenziali tramite variabili d'ambiente o un secret manager dedicato.
 - **HTTPS**: abilitare la comunicazione cifrata TLS/SSL prima di qualsiasi rilascio in produzione.
+- **Test automatici**: il progetto include la dipendenza `spring-boot-starter-test` e `spring-security-test`. Si raccomanda di espandere la suite di test con test di integrazione per i controller e i service.
+- **Gestione avanzata degli errori**: la pagina di errore generica (`error.html`) è presente; si raccomanda di differenziare la gestione per codice HTTP (404, 403, 500).
 
 ---
 

@@ -1,0 +1,21 @@
+# ============================================================
+# PROMETHEUS — Configurazione Scraping
+# ============================================================
+# Prometheus raccoglie ("scrapa") le metriche dalla nostra app
+# ogni 15 secondi e le salva in un database interno (TSDB).
+# Grafana poi legge questo database per creare le dashboard.
+# ============================================================
+
+global:
+  scrape_interval: 15s       # Ogni 15 secondi raccoglie nuove metriche
+  evaluation_interval: 15s   # Ogni 15 secondi valuta le regole di alerting
+
+scrape_configs:
+  # ==================== SPRING BOOT APP ====================
+  # Scrapa le metriche JVM dall'endpoint /actuator/prometheus
+  - job_name: 'springboot-app'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['backend:8081']    # "backend" è il nome del servizio in docker-compose
+        labels:
+          application: 'gestione-formazione'

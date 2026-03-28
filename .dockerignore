@@ -1,0 +1,34 @@
+# ============================================================
+# .dockerignore — File da NON copiare nell'immagine Docker
+# ============================================================
+# Funziona esattamente come .gitignore, ma per Docker.
+# Tutto ciò che è elencato qui viene ESCLUSO dal contesto
+# di build, rendendo la costruzione più veloce e l'immagine
+# più leggera e sicura (es: non vogliamo il .env nell'immagine!).
+# ============================================================
+
+# Cartella di compilazione locale (Maven la ricrea dentro Docker)
+target/
+
+# File Git (non servono a runtime)
+.git/
+.gitignore
+
+# File ambiente con credenziali (MAI metterli nell'immagine!)
+.env
+.env.example
+
+# Cartelle IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Il Dockerfile stesso e il docker-compose non servono nell'immagine
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentazione
+*.md

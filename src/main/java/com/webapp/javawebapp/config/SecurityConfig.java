@@ -31,6 +31,9 @@ public class SecurityConfig {
                         // Permettiamo CSS, JavaScript, Login e Registrazione.
                         .requestMatchers("/login", "/registrazione", "/css/**", "/js/**").permitAll()
 
+                        // Endpoint di monitoraggio (Prometheus li scrapa per le metriche)
+                        .requestMatchers("/actuator/**").permitAll()
+
                         // 2. Area ADMIN (Stanza VIP, solo gli Admin)
                         // 'hasRole' controlla nel DB se la tua lista ruoli contiene "ROLE_ADMIN".
                         .requestMatchers("/utenti/**").hasRole("ADMIN")
