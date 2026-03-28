@@ -28,6 +28,22 @@ jobs:
     name: 🔨 Build & Test
     runs-on: ubuntu-latest      # Gira su una macchina virtuale Linux di GitHub
 
+    # Avviamo un database PostgreSQL temporaneo per far passare i test
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: gestione_formazione
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: root
+        ports:
+          - 5443:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       # Step 1: Scarica il codice dal repository
       - name: 📥 Checkout del codice
