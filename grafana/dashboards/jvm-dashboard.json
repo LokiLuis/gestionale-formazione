@@ -9,7 +9,7 @@
       "title": "🟢 Application Status",
       "type": "stat",
       "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [{ "expr": "up{job=\"springboot-app\"}", "legendFormat": "Status" }],
       "fieldConfig": {
         "defaults": {
@@ -24,7 +24,7 @@
       "title": "⏱️ Uptime",
       "type": "stat",
       "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [{ "expr": "process_uptime_seconds{job=\"springboot-app\"}", "legendFormat": "Uptime" }],
       "fieldConfig": { "defaults": { "unit": "s" } }
     },
@@ -32,7 +32,7 @@
       "title": "🧵 Active Threads",
       "type": "stat",
       "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [{ "expr": "jvm_threads_live_threads{job=\"springboot-app\"}", "legendFormat": "Threads" }],
       "fieldConfig": { "defaults": { "thresholds": { "steps": [{ "value": null, "color": "green" }, { "value": 100, "color": "yellow" }, { "value": 200, "color": "red" }] } } }
     },
@@ -40,14 +40,14 @@
       "title": "📦 Classes Loaded",
       "type": "stat",
       "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [{ "expr": "jvm_classes_loaded_classes{job=\"springboot-app\"}", "legendFormat": "Classes" }]
     },
     {
       "title": "💾 JVM Heap Memory Used",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         { "expr": "jvm_memory_used_bytes{job=\"springboot-app\", area=\"heap\"}", "legendFormat": "{{id}} - Used" },
         { "expr": "jvm_memory_max_bytes{job=\"springboot-app\", area=\"heap\"}", "legendFormat": "{{id}} - Max" }
@@ -58,7 +58,7 @@
       "title": "💾 JVM Non-Heap Memory Used",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         { "expr": "jvm_memory_used_bytes{job=\"springboot-app\", area=\"nonheap\"}", "legendFormat": "{{id}} - Used" },
         { "expr": "jvm_memory_max_bytes{job=\"springboot-app\", area=\"nonheap\"}", "legendFormat": "{{id}} - Max" }
@@ -69,7 +69,7 @@
       "title": "🌐 HTTP Requests Rate (per second)",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         { "expr": "rate(http_server_requests_seconds_count{job=\"springboot-app\"}[1m])", "legendFormat": "{{method}} {{uri}} [{{status}}]" }
       ],
@@ -79,7 +79,7 @@
       "title": "⏳ HTTP Response Time (avg)",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         { "expr": "rate(http_server_requests_seconds_sum{job=\"springboot-app\"}[1m]) / rate(http_server_requests_seconds_count{job=\"springboot-app\"}[1m])", "legendFormat": "{{method}} {{uri}}" }
       ],
@@ -89,7 +89,7 @@
       "title": "♻️ Garbage Collector — Pause Time",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         { "expr": "rate(jvm_gc_pause_seconds_sum{job=\"springboot-app\"}[1m])", "legendFormat": "{{action}} - {{cause}}" }
       ],
@@ -99,7 +99,7 @@
       "title": "📊 CPU Usage",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         { "expr": "process_cpu_usage{job=\"springboot-app\"}", "legendFormat": "App CPU" },
         { "expr": "system_cpu_usage{job=\"springboot-app\"}", "legendFormat": "System CPU" }
