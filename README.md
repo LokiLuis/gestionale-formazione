@@ -10,6 +10,9 @@
 > Applicazione web enterprise per la gestione di anagrafiche utenti e attività formative, con autenticazione basata su ruoli (RBAC), observability stack (Prometheus + Grafana) e CI/CD automatizzata.
 
 ---
+(Cliccare sull' immagine per poter guardare il risultato del progetto su youtube.)
+[![Testo Alternativo Video](https://img.youtube.com/vi/piZ5f9hNpXg/0.jpg)](https://www.youtube.com/watch?v=piZ5f9hNpXg)
+---
 
 ## 🏗️ Architettura
 
